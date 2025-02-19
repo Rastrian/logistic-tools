@@ -7,7 +7,7 @@ A command-line tool for managing invoices, sales orders and other requirements f
 1. Clone this repository:
 
 ```bash
-git clone https://github.com/yourusername/logistic-tools.git
+git clone https://github.com/Rastrian/logistic-tools.git
 cd logistic-tools
 ```
 
