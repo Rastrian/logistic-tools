@@ -1,7 +1,7 @@
 import typer
 from typing import List
 import asyncio
-from commands.invoice_commands import reissue_invoices, update_invoices_with_error, update_and_reissue_invoices
+from commands.invoice_commands import reissue_invoices, update_invoices_with_error, update_and_reissue_invoices, deny_invoices, finish_sales_order, issue_sales_order_invoice, finish_and_issue_invoice
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.table import Table
@@ -16,6 +16,10 @@ def show_menu():
     table.add_row("reissue <invoice_ids...>", "Reissue one or more invoices")
     table.add_row("error <invoice_ids...>", "Update invoices with error status")
     table.add_row("update-and-reissue <invoice_ids...>", "Update and reissue invoices")
+    table.add_row("deny <invoice_ids...>", "Change invoice status to denied")
+    table.add_row("finish <sales_order_id>", "Change sales order status to finish")
+    table.add_row("issue-invoice <sales_order_id>", "Issue invoice for a sales order")
+    table.add_row("finish-and-issue <sales_order_id>", "Finish sales order and issue invoice")
     table.add_row("help", "Show this help message")
     table.add_row("exit", "Exit the application")
     console.print(table)
@@ -62,6 +66,31 @@ def interactive_mode():
                 message = Prompt.ask("Error message", default="Fail to process order on SAP: Invoice retry stuck")
                 delay = int(Prompt.ask("Delay (seconds)", default="15"))
                 asyncio.run(update_and_reissue_invoices(args, message, delay))
+                
+            elif cmd == 'deny':
+                if not args:
+                    console.print("[red]Error: Please provide invoice IDs[/red]")
+                    continue
+                asyncio.run(deny_invoices(args))
+                
+            elif cmd == 'finish':
+                if not args:
+                    console.print("[red]Error: Please provide a sales order ID[/red]")
+                    continue
+                asyncio.run(finish_sales_order(args[0]))
+                
+            elif cmd == 'issue-invoice':
+                if not args:
+                    console.print("[red]Error: Please provide a sales order ID[/red]")
+                    continue
+                asyncio.run(issue_sales_order_invoice(args[0]))
+                
+            elif cmd == 'finish-and-issue':
+                if not args:
+                    console.print("[red]Error: Please provide a sales order ID[/red]")
+                    continue
+                delay = int(Prompt.ask("Delay (seconds)", default="15"))
+                asyncio.run(finish_and_issue_invoice(args[0], delay))
                 
             else:
                 console.print(f"[red]Unknown command: {cmd}[/red]")

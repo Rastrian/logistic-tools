@@ -27,3 +27,25 @@ class InvoiceService:
         )
         response.raise_for_status()
         return response.json()
+
+    @staticmethod
+    async def deny_invoices(invoice_ids: List[str]) -> dict:
+        url = f"{Config.API_BASE_URL}/invoices/issued_denied"
+        response = requests.post(
+            url,
+            headers=Config.get_headers(),
+            json={"invoice_ids": invoice_ids}
+        )
+        response.raise_for_status()
+        return response.json()
+
+    @staticmethod
+    async def issue_sales_order_invoice(sales_order_id: str) -> dict:
+        url = f"{Config.API_BASE_URL}/invoices/issue_sales_order_invoice"
+        response = requests.post(
+            url,
+            headers=Config.get_headers(),
+            json={"sales_order_id": sales_order_id}
+        )
+        response.raise_for_status()
+        return response.json()
