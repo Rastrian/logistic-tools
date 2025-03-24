@@ -79,3 +79,15 @@ async def finish_and_issue_invoice(sales_order_id: str, delay: int = 15):
         console.print("[bold green]✓ Complete: All operations finished successfully[/bold green]")
     except Exception as e:
         console.print(f"[bold red]Operation failed: {str(e)}[/bold red]")
+
+async def check_pending_invoices(invoice_ids: List[str]):
+    with Progress() as progress:
+        task = progress.add_task("[cyan]Checking pending invoices...", total=len(invoice_ids))
+        try:
+            result = await InvoiceService.check_pending_invoices(invoice_ids)
+            console.print("[green]Successfully checked pending invoices")
+            console.print(result)
+        except Exception as e:
+            console.print(f"[red]Error checking pending invoices: {str(e)}")
+        finally:
+            progress.advance(task)

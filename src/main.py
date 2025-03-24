@@ -1,7 +1,7 @@
 import typer
 from typing import List
 import asyncio
-from commands.invoice_commands import reissue_invoices, update_invoices_with_error, update_and_reissue_invoices, deny_invoices, finish_sales_order, issue_sales_order_invoice, finish_and_issue_invoice
+from commands.invoice_commands import reissue_invoices, update_invoices_with_error, update_and_reissue_invoices, deny_invoices, finish_sales_order, issue_sales_order_invoice, finish_and_issue_invoice, check_pending_invoices
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.table import Table
@@ -20,6 +20,7 @@ def show_menu():
     table.add_row("finish <sales_order_id>", "Change sales order status to finish")
     table.add_row("issue-invoice <sales_order_id>", "Issue invoice for a sales order")
     table.add_row("finish-and-issue <sales_order_id>", "Finish sales order and issue invoice")
+    table.add_row("check-pending <invoice_ids...>", "Check pending status of invoices")
     table.add_row("help", "Show this help message")
     table.add_row("exit", "Exit the application")
     console.print(table)
@@ -91,6 +92,12 @@ def interactive_mode():
                     continue
                 delay = int(Prompt.ask("Delay (seconds)", default="15"))
                 asyncio.run(finish_and_issue_invoice(args[0], delay))
+                
+            elif cmd == 'check-pending':
+                if not args:
+                    console.print("[red]Error: Please provide invoice IDs[/red]")
+                    continue
+                asyncio.run(check_pending_invoices(args))
                 
             else:
                 console.print(f"[red]Unknown command: {cmd}[/red]")

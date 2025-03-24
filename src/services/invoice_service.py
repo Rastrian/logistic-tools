@@ -49,3 +49,14 @@ class InvoiceService:
         )
         response.raise_for_status()
         return response.json()
+
+    @staticmethod
+    async def check_pending_invoices(invoice_ids: List[str]) -> dict:
+        url = f"{Config.API_BASE_URL}/invoices/check_pending"
+        response = requests.post(
+            url,
+            headers=Config.get_headers(),
+            json={"invoice_ids": invoice_ids}
+        )
+        response.raise_for_status()
+        return response.json()
