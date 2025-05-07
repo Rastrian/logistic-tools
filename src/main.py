@@ -5,6 +5,7 @@ from commands.invoice_commands import reissue_invoices, update_invoices_with_err
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.table import Table
+from commands.tanaporta_commands import cancel_tanaporta_order
 
 app = typer.Typer()
 console = Console()
@@ -21,6 +22,7 @@ def show_menu():
     table.add_row("issue-invoice <sales_order_id>", "Issue invoice for a sales order")
     table.add_row("finish-and-issue <sales_order_id>", "Finish sales order and issue invoice")
     table.add_row("check-pending <invoice_ids...>", "Check pending status of invoices")
+    table.add_row("cancel-tanaporta <order_id>", "Cancel Tanaporta order")
     table.add_row("help", "Show this help message")
     table.add_row("exit", "Exit the application")
     console.print(table)
@@ -98,6 +100,12 @@ def interactive_mode():
                     console.print("[red]Error: Please provide invoice IDs[/red]")
                     continue
                 asyncio.run(check_pending_invoices(args))
+                
+            elif cmd == 'cancel-tanaporta':
+                if not args:
+                    console.print("[red]Error: Please provide an order ID[/red]")
+                    continue
+                asyncio.run(cancel_tanaporta_order(args[0]))
                 
             else:
                 console.print(f"[red]Unknown command: {cmd}[/red]")
